@@ -3,7 +3,9 @@ import sys
 import random
 import MathAndStats as ms
 import FeedforwardNetwork as ffn
-import EvolutionaryAlgorithms as ea
+import GeneticAlgorithm as ga
+import DifferentialEvolution as de
+#import EvolutionaryAlgorithms as ea
 
 def openFile(data_file):
     lines = open(data_file, "r").readlines()
@@ -74,13 +76,16 @@ def tenFoldCV(chunked_data, clss_list, use_regression, hidden_layer_nodes):
         validation_index = int((float(len(training_set)) * 8 / 10)) - 1
         if use_regression:
             mlp = ffn.FeedforwardNetwork(1, clss_list, "regression", True, False)
-            mlp.setWeights([len(chunks[0][0]) - 1] + hidden_layer_nodes[:1],
-                           ea.generateFFNGA(mlp, training_set[:validation_index], training_set[validation_index:],
-                             [len(chunks[0][0]) - 1] + hidden_layer_nodes[:1],
-                             prob_cross=0.6, prob_mutation=0.01, mutation_variance=0.2, population_size=40,
-                             max_generations=1000))
-            results = ms.testRegressor(mlp, testing_set)
-            print(ms.getMean(results, len(results)))
+            #gen_alg = ga.GeneticAlgorithm(0.6, 0.01, 0.2, 40, 200)
+            #mlp.setWeights([len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], gen_alg.optimize(
+            #    mlp, [len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], training_set))
+            diff_ev = de.DifferentialEvolution(0.5, 0.5, 40, 10)
+            diff_ev.y = 2
+            mlp.setWeights([len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], diff_ev.optimize(
+               mlp, [len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], training_set))
+
+            results = ms.testRegressor(mlp, testing_set)[1]
+            print(results)
 
 
 if(len(sys.argv) > 2):
