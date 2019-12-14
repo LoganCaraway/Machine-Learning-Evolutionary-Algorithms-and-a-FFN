@@ -37,11 +37,9 @@ class GeneticAlgorithm:
             if population_fitness[index] > population_fitness[best_fitness_index]:
                 best_fitness_index = index
         most_fit_chromosome = population[best_fitness_index]
-        # mlp.setWeights(parameter_struct, most_fit_chromosome)
         return most_fit_chromosome
 
-    # initialize a population of chromosomes with random weights in [min, max]
-    # along a uniform distribution
+    # initialize a population of chromosomes with random weights along a uniform distribution
     def initializePopulation(self, algorithm, parameter_struct):
         # find length of chromosome
         length, min, max = algorithm.getParameters(parameter_struct)
@@ -57,14 +55,13 @@ class GeneticAlgorithm:
         return population
 
     # evaluate the fitness of a group of chromosomes
-    # fitness has been chosen to be the the negative of their typical error (MSE/0-1 loss/etc)
     def evaluateGroupFitness(self, algorithm, parameter_struct, testing_set, group):
         group_fitness = []
         for chromosome_num in range(len(group)):
             group_fitness.append(algorithm.getFitness(testing_set, parameter_struct, group[chromosome_num]))
         return group_fitness
 
-    # choose selection group of size 1/2 of the original population size using k tournament selection
+    # choose selection group using k tournament selection
     def selectChromosomes(self, population, population_fitness):
         selection_group = []
         # for loop iterating for the length of the desired selection group

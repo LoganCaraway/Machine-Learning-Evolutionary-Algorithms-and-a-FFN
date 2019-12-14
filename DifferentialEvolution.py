@@ -56,12 +56,10 @@ class DifferentialEvolution:
             if population_fitness[index] > population_fitness[best_fitness_index]:
                 best_fitness_index = index
         most_fit_chromosome = population[best_fitness_index]
-        #mlp.setWeights(nodes_by_layer, most_fit_chromosome)
         return most_fit_chromosome
 
 
-    # initialize a population of vectors with random weights in [min, max]
-    # along a uniform distribution
+    # initialize a population of vectors with random weights along a uniform distribution
     def initializePopulation(self, algorithm, parameter_struct):
         # find length of chromosome
         length, min, max = algorithm.getParameters(parameter_struct)
@@ -77,15 +75,14 @@ class DifferentialEvolution:
         return population
 
 
-    # evaluate the fitness of a group of chromosomes
-    # fitness has been chosen to be the the negative of their typical error (MSE/0-1 loss/etc)
+    # evaluate the fitness of a group of vectors
     def evaluateGroupFitness(self, algorithm, parameter_struct, testing_set, group):
         group_fitness = []
-        for chromosome_num in range(len(group)):
-            group_fitness.append(algorithm.getFitness(testing_set, parameter_struct, group[chromosome_num]))
+        for vector_num in range(len(group)):
+            group_fitness.append(algorithm.getFitness(testing_set, parameter_struct, group[vector_num]))
         return group_fitness
 
-    # implementes mutation with 1 difference vector for differential evolution
+    # implements mutation with y difference vectors
     def mutate(self, population, population_fitness):
         if self.x == "rand":
             trial_vector = copy.deepcopy(population[random.randint(0, self.population_size - 1)])
@@ -101,18 +98,10 @@ class DifferentialEvolution:
             for diff in range(self.y):
                 difference += self.beta * (population[random.randint(0, self.population_size - 1)][gene] -
                                  population[random.randint(0, self.population_size - 1)][gene])
-            #if trial_vector[gene] + difference > 1.5:
-            #    print("AAAAAAAAAAAAAAAAAAAA")
-            #    trial_vector[gene] = 3 - (trial_vector[gene] + difference)
-            #elif trial_vector[gene] + difference < -1.5:
-            #    print("BBBBBBBBBBBBBBBBB")
-            #    trial_vector[gene] = -3 + (trial_vector[gene] + difference)
-            #else:
             trial_vector[gene] += difference
-        # trial_vector += beta * ( population[random.randint(0, len(population)-1)] - population[random.randint(0, len(population)-1)])
         return trial_vector
 
-    # implements uniform crossover for differential evolution
+    # implements uniform crossover
     def crossover(self, target_vector, trial_vector):
         new_vector = []
         for gene in range(len(target_vector)):

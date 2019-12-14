@@ -5,6 +5,7 @@ import MathAndStats as ms
 import FeedforwardNetwork as ffn
 import GeneticAlgorithm as ga
 import DifferentialEvolution as de
+import EvolutionStrategies as es
 #import EvolutionaryAlgorithms as ea
 
 def openFile(data_file):
@@ -79,11 +80,14 @@ def tenFoldCV(chunked_data, clss_list, use_regression, hidden_layer_nodes):
             #gen_alg = ga.GeneticAlgorithm(0.6, 0.01, 0.2, 40, 200)
             #mlp.setWeights([len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], gen_alg.optimize(
             #    mlp, [len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], training_set))
-            diff_ev = de.DifferentialEvolution(0.5, 0.5, 40, 10)
-            diff_ev.y = 2
-            mlp.setWeights([len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], diff_ev.optimize(
-               mlp, [len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], training_set))
-
+            #diff_ev = de.DifferentialEvolution(0.4, 0.5, 40, 80)
+            #diff_ev.y = 2
+            #mlp.setWeights([len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], diff_ev.optimize(
+            #   mlp, [len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], training_set))
+            es_alg = es.EvolutionStrategies(3,3,9,0.9,0.2,150)
+            mlp.setWeights([len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], es_alg.optimize(
+              mlp, [len(chunks[0][0]) - 1] + hidden_layer_nodes[:1], training_set))
+            #(self, mu, rho, lmbda, alpha, sigma, max_generations)
             results = ms.testRegressor(mlp, testing_set)[1]
             print(results)
 
